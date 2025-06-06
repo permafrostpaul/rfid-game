@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Student Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>New Student Registration</h1>
+        <p>Welcome! Your RFID card is new to our system. Please enter your details.</p>
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="student-number">Student Number</label>
+                <input type="text" id="student-number" name="student-number" required>
+            </div>
+            <p id="error-message" class="error-text"></p>
+            <button type="submit" class="submit-btn">Register and Play</button>
+        </form>
+    </div>
+    <script src="signup.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Leaderboard</h1>
+        <table id="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Student Number</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                </tbody>
+        </table>
+        <a href="/">Back to Game</a>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Find the table body element
+            const leaderboardBody = document.getElementById('leaderboard-body');
+
+            // Fetch the data from our working API endpoint
+            fetch('/api/leaderboard')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Received leaderboard data:", data); // Good for debugging
+
+                    // Clear any previous text like "loading..."
+                    leaderboardBody.innerHTML = '';
+
+                    // Check if there is any data to display
+                    if (!data || data.length === 0) {
+                        leaderboardBody.innerHTML = '<tr><td colspan="4">No scores yet. Be the first!</td></tr>';
+                        return;
+                    }
+
+                    // Loop through each student in the data array
+                    data.forEach((student, index) => {
+                        // Create a new table row element
+                        const row = document.createElement('tr');
+
+                        // Populate the row with data.
+                        // Using template literals and ensuring all data is present.
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${student.name || 'N/A'}</td>
+                            <td>${student.student_number || 'N/A'}</td>
+                            <td>${student.points || 0}</td>
+                        `;
+                        
+                        // Add the completed row to the table body
+                        leaderboardBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching or displaying leaderboard:', error);
+                    leaderboardBody.innerHTML = '<tr><td colspan="4">Could not load leaderboard data.</td></tr>';
+                });
+        });
+    </script>
+</body>
+</html>

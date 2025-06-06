@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RFID Flashcard Game</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div id="login-view">
+        <div class="welcome-header">
+          <h1>Welcome to RFID Flashcard Game!</h1>
+          <div class="welcome-decoration">
+            <i class="fas fa-gamepad"></i>
+            <i class="fas fa-brain"></i>
+            <i class="fas fa-trophy"></i>
+          </div>
+        </div>
+
+        <div class="welcome-content">
+          <div class="info-cards-row">
+            <div class="feature-card info-card">
+              <i class="fas fa-graduation-cap"></i>
+              <h3>Learn & Play</h3>
+              <p>Test your knowledge with interactive flashcards</p>
+            </div>
+
+            <div class="feature-card info-card">
+              <i class="fas fa-clock"></i>
+              <h3>Time Challenge</h3>
+              <p>Race against time to score points</p>
+            </div>
+
+            <div class="feature-card info-card">
+              <i class="fas fa-medal"></i>
+              <h3>Compete</h3>
+              <p>Compete with others on the leaderboard</p>
+            </div>
+          </div>
+
+          <div class="cta-card-row">
+            <div
+              class="feature-card view-change-btn"
+              data-view="leaderboard-view"
+            >
+              <i class="fas fa-list-ol"></i>
+              <h3>Leaderboard</h3>
+              <p>See how you rank against others</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="scan-section">
+          <div class="scan-icon">
+            <i class="fas fa-id-card"></i>
+            <div class="scan-line"></div>
+          </div>
+          <p class="scan-text">
+            Please scan your student card on the RFID reader to begin
+          </p>
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <div id="welcome-screen" class="hidden">
+        <div class="welcome-screen-content">
+          <h1>Welcome <span id="welcome-name"></span>!</h1>
+          <div class="welcome-decoration">
+            <i class="fas fa-gamepad"></i>
+            <i class="fas fa-brain"></i>
+            <i class="fas fa-trophy"></i>
+          </div>
+
+          <div class="player-stats">
+            <div class="stat-card">
+              <i class="fas fa-star"></i>
+              <span id="current-score">0</span>
+              <label>Current Score</label>
+            </div>
+            <div class="stat-card">
+              <i class="fas fa-medal"></i>
+              <span id="rank">-</span>
+              <label>Your Rank</label>
+            </div>
+          </div>
+
+          <div class="how-to-play">
+            <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+            <ul>
+              <li><i class="fas fa-check"></i> Choose your difficulty level</li>
+              <li>
+                <i class="fas fa-check"></i> Answer questions within the time
+                limit
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Earn points for correct answers
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Compete for the highest score!
+              </li>
+            </ul>
+          </div>
+
+          <p class="welcome-message">Ready to test your knowledge?</p>
+          <button id="play-button" class="play-btn">
+            <i class="fas fa-play"></i>
+            Start Playing
+          </button>
+        </div>
+      </div>
+
+      <div id="difficulty-view" class="hidden">
+        <h1>Choose Your Challenge</h1>
+        <div class="difficulty-options">
+          <button class="difficulty-btn easy" data-difficulty="easy">
+            <i class="fas fa-star"></i>
+            <span class="difficulty-label">Easy</span>
+            <span class="difficulty-description">Perfect for beginners</span>
+          </button>
+          <button class="difficulty-btn medium" data-difficulty="medium">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <span class="difficulty-label">Medium</span>
+            <span class="difficulty-description">For experienced players</span>
+          </button>
+          <button class="difficulty-btn hard" data-difficulty="hard">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <span class="difficulty-label">Hard</span>
+            <span class="difficulty-description">Challenge yourself!</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="game-view" class="hidden">
+        <div class="game-header">
+          <h2 id="player-name"></h2>
+          <div class="game-stats">
+            <p class="timer">Time: <span id="timer-display">60</span>s</p>
+            <p class="score">Score: <span id="score-display">0</span></p>
+          </div>
+          <button id="logout-btn" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+        <div id="question-container">
+          <p id="question-text"></p>
+          <div id="answer-options"></div>
+        </div>
+        <p id="feedback-text"></p>
+      </div>
+
+      <div id="game-over-view" class="hidden">
+        <div class="game-over-content">
+          <h1>Game Over!</h1>
+          <div class="final-score-display">
+            <i class="fas fa-trophy"></i>
+            <p>Your final score is <span id="final-score"></span></p>
+          </div>
+          <div class="game-over-actions">
+            <!-- Updated link to trigger view change instead of navigating -->
+            <button
+              class="leaderboard-btn view-change-btn"
+              data-view="leaderboard-view"
+            >
+              <i class="fas fa-list-ol"></i> View Leaderboard
+            </button>
+            <button id="play-again-btn" class="submit-btn">
+              <i class="fas fa-redo"></i> Play Again
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard View -->
+      <div id="leaderboard-view" class="hidden">
+        <h1>Leaderboard</h1>
+
+        <!-- Top Players Section -->
+        <div class="top-players-section">
+          <h2>Top Players</h2>
+          <div id="top-players-list" class="top-players-list">
+            <!-- Top players will be loaded here by JavaScript -->
+          </div>
+        </div>
+
+        <!-- All Players Section -->
+        <div class="all-players-section">
+          <h2>All Players</h2>
+          <div class="leaderboard-table-container">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>RANK</th>
+                  <th>NAME</th>
+                  <th>STUDENT NUMBER</th>
+                  <th>POINTS</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-body">
+                <!-- Leaderboard data will be loaded here by JavaScript -->
+                <tr>
+                  <td colspan="4">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <button id="back-to-home-btn" class="submit-btn">
+          <i class="fas fa-home"></i> Back to Home
+        </button>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
