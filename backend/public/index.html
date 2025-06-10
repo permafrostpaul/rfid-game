@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RFID Flashcard Game</title>
+    <title>Project RAISE</title>
     <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
@@ -14,7 +14,9 @@
     <div class="container">
       <div id="login-view">
         <div class="welcome-header">
-          <h1>Welcome to RFID Flashcard Game!</h1>
+          <h1>
+            Project RAISE: RFID-Authenticated Interactive System for Education
+          </h1>
           <div class="welcome-decoration">
             <i class="fas fa-gamepad"></i>
             <i class="fas fa-brain"></i>
@@ -26,20 +28,20 @@
           <div class="info-cards-row">
             <div class="feature-card info-card">
               <i class="fas fa-graduation-cap"></i>
-              <h3>Learn & Play</h3>
-              <p>Test your knowledge with interactive flashcards</p>
+              <h3>Test Your Knowledge</h3>
+              <p>Tackle questions on ESP32 and sensors.</p>
             </div>
 
             <div class="feature-card info-card">
               <i class="fas fa-clock"></i>
-              <h3>Time Challenge</h3>
-              <p>Race against time to score points</p>
+              <h3>Debug the Clock</h3>
+              <p>Race against time to answer questions and score points.</p>
             </div>
 
             <div class="feature-card info-card">
               <i class="fas fa-medal"></i>
-              <h3>Compete</h3>
-              <p>Compete with others on the leaderboard</p>
+              <h3>Become a Legend</h3>
+              <p>Compete with fellow engineers on the leaderboard.</p>
             </div>
           </div>
 
@@ -50,7 +52,7 @@
             >
               <i class="fas fa-list-ol"></i>
               <h3>Leaderboard</h3>
-              <p>See how you rank against others</p>
+              <p>See who is the top embedded systems guru</p>
             </div>
           </div>
         </div>
@@ -60,16 +62,14 @@
             <i class="fas fa-id-card"></i>
             <div class="scan-line"></div>
           </div>
-          <p class="scan-text">
-            Please scan your student card on the RFID reader to begin
-          </p>
+          <p class="scan-text">Tap your ID on the RAISE terminal to boot up!</p>
           <div class="spinner"></div>
         </div>
       </div>
 
       <div id="welcome-screen" class="hidden">
         <div class="welcome-screen-content">
-          <h1>Welcome <span id="welcome-name"></span>!</h1>
+          <h1>Welcome, <span id="welcome-name"></span>!</h1>
           <div class="welcome-decoration">
             <i class="fas fa-gamepad"></i>
             <i class="fas fa-brain"></i>
@@ -106,7 +106,7 @@
             </ul>
           </div>
 
-          <p class="welcome-message">Ready to test your knowledge?</p>
+          <p class="welcome-message">Ready to prove your embedded mastery?</p>
           <button id="play-button" class="play-btn">
             <i class="fas fa-play"></i>
             Start Playing
@@ -120,20 +120,22 @@
           <button class="difficulty-btn easy" data-difficulty="easy">
             <i class="fas fa-star"></i>
             <span class="difficulty-label">Easy</span>
-            <span class="difficulty-description">Perfect for beginners</span>
+            <span class="difficulty-description">Intro to C & basic GPIO.</span>
           </button>
           <button class="difficulty-btn medium" data-difficulty="medium">
             <i class="fas fa-star"></i>
             <i class="fas fa-star"></i>
             <span class="difficulty-label">Medium</span>
-            <span class="difficulty-description">For experienced players</span>
+            <span class="difficulty-description">Tackle I2C, SPI & ADC.</span>
           </button>
           <button class="difficulty-btn hard" data-difficulty="hard">
             <i class="fas fa-star"></i>
             <i class="fas fa-star"></i>
             <i class="fas fa-star"></i>
             <span class="difficulty-label">Hard</span>
-            <span class="difficulty-description">Challenge yourself!</span>
+            <span class="difficulty-description"
+              >>Master RTOS & memory management.</span
+            >
           </button>
         </div>
       </div>
@@ -141,6 +143,7 @@
       <div id="game-view" class="hidden">
         <div class="game-header">
           <h2 id="player-name"></h2>
+          <p class="question-indicator" id="question-indicator"></p> 
           <div class="game-stats">
             <p class="timer">Time: <span id="timer-display">60</span>s</p>
             <p class="score">Score: <span id="score-display">0</span></p>
@@ -165,14 +168,11 @@
           </div>
           <div class="game-over-actions">
             <!-- Updated link to trigger view change instead of navigating -->
-            <button
-              class="leaderboard-btn view-change-btn"
-              data-view="leaderboard-view"
-            >
-              <i class="fas fa-list-ol"></i> View Leaderboard
-            </button>
             <button id="play-again-btn" class="submit-btn">
               <i class="fas fa-redo"></i> Play Again
+            </button>
+            <button id="gameOver-logout-btn" class="logout-btn">
+              <i class="fas fa-sign-out-alt"></i> Logout
             </button>
           </div>
         </div>

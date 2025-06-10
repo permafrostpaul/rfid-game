@@ -1,4 +1,4 @@
-// public/app.js - Final Corrected Version
+// public/app.js - Final Complete Code
 
 document.addEventListener("DOMContentLoaded", () => {
   // --- VIEWS ---
@@ -33,14 +33,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const playAgainBtn = document.getElementById("play-again-btn");
   const leaderboardBody = document.getElementById("leaderboard-body");
   const topPlayersList = document.getElementById("top-players-list");
-  const backToHomeBtn = document.getElementById("back-to-home-btn"); // New button
+  const backToHomeBtn = document.getElementById("back-to-home-btn");
+  const gameOverLogoutBtn = document.getElementById("gameOver-logout-btn");
+  const questionIndicator = document.getElementById("question-indicator");
 
   // --- STATE VARIABLES ---
   let questions = [];
   let currentQuestionIndex = 0;
   let score = 0;
-  const TIME_LIMIT = 60;
-  let timeLeft = TIME_LIMIT;
+  let timeLimit = 60; // Default time limit, will be changed based on difficulty
+  let timeLeft = timeLimit;
   let timerInterval;
   let stateCheckInterval;
   let currentPlayer = null;
@@ -106,8 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // --- INITIALIZATION & GAME FLOW ---
-  const initializePage = async () => {
-    await fetch("/api/reset", { method: "POST" });
+  const initializePage = () => {
     showView("login-view");
     stateCheckInterval = setInterval(checkSystemState, 2000);
   };
@@ -116,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("/api/game-state");
       const data = await response.json();
-      console.log("System state check:", data.status);
       if (data.status === "PLAYER_LOGGED_IN") {
         clearInterval(stateCheckInterval);
         showWelcomeScreen(data.player);
@@ -130,7 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const showWelcomeScreen = async (player) => {
-    console.log("Calling showWelcomeScreen");
     currentPlayer = player;
     welcomeName.textContent = player.name;
     currentScoreDisplay.textContent = player.points || "0";
@@ -138,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("/api/leaderboard");
       const data = await response.json();
       const playerRank =
-        data.findIndex((student) => student.name === player.name) + 1;
+        data.findIndex((student) => student.rfid_uid === player.rfid_uid) + 1;
       rankDisplay.textContent = playerRank > 0 ? `#${playerRank}` : "-";
     } catch (error) {
       rankDisplay.textContent = "-";
@@ -156,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
       if (data.questions && data.questions.length > 0) {
         questions = data.questions;
-        startGame(data.player);
+        startGame(data.player, difficulty);
       } else {
         alert(`No questions found for ${difficulty} difficulty.`);
       }
@@ -165,10 +164,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const startGame = (player) => {
+  const startGame = (player, difficulty) => {
+    // Set time limit based on difficulty
+    if (difficulty === 'hard') {
+        timeLimit = 30; // 30 seconds for hard mode
+    } else {
+        timeLimit = 60; // 60 seconds for easy/medium
+    }
+
     currentPlayer = player;
     showView("game-view");
-    score = player.points;
+    score = player.points; // Start with the player's current score
     playerName.textContent = player.name;
     scoreDisplay.textContent = score;
     currentQuestionIndex = 0;
@@ -181,10 +187,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     clearInterval(timerInterval);
-    timeLeft = TIME_LIMIT;
+    timeLeft = timeLimit;
     timerDisplay.textContent = timeLeft;
     startTimer();
     feedbackText.textContent = "";
+
+    // Update the question indicator
+    questionIndicator.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+
     const currentQuestion = questions[currentQuestionIndex];
     questionText.textContent = currentQuestion.question;
     answerOptions.innerHTML = "";
@@ -241,17 +251,14 @@ document.addEventListener("DOMContentLoaded", () => {
       button.classList.add("correct");
     } else {
       feedbackText.textContent = `Wrong! The correct answer was: ${result.correctAnswer}`;
-      // Mark the user's incorrect choice in red
       button.classList.add("wrong");
 
-      // --- NEW: Find and highlight the correct answer in green ---
       const correctButton = Array.from(
         document.querySelectorAll(".answer-btn")
       ).find((btn) => btn.textContent === result.correctAnswer);
       if (correctButton) {
         correctButton.classList.add("correct");
       }
-      // --- END OF NEW LOGIC ---
     }
 
     setTimeout(() => {
@@ -264,9 +271,22 @@ document.addEventListener("DOMContentLoaded", () => {
     clearInterval(timerInterval);
     showView("game-over-view");
     finalScore.textContent = score;
+    questionIndicator.textContent = ""; // Clear the indicator
   };
 
   // --- EVENT LISTENERS ---
+  const performLogout = () => {
+    clearInterval(stateCheckInterval);
+    clearInterval(timerInterval);
+    fetch("/api/logout", { method: "POST" })
+      .then(() => {
+        window.location.href = "/";
+      })
+      .catch(() => {
+        window.location.href = "/"; // Go home even if the fetch fails
+      });
+  };
+
   playButton.addEventListener("click", () => showDifficultySelection());
 
   document.querySelectorAll(".difficulty-btn").forEach((button) => {
@@ -283,20 +303,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   playAgainBtn.addEventListener("click", () => showDifficultySelection());
 
-  const performLogout = () => {
-    clearInterval(stateCheckInterval);
-    clearInterval(timerInterval);
-    fetch("/api/logout", { method: "POST" })
-      .then(() => {
-        window.location.href = "/";
-      })
-      .catch(() => {
-        window.location.href = "/";
-      });
-  };
-
+  // Attach logout to all three buttons
   logoutBtn.addEventListener("click", performLogout);
   backToHomeBtn.addEventListener("click", performLogout);
+  gameOverLogoutBtn.addEventListener("click", performLogout);
 
   // --- START THE APPLICATION ---
   initializePage();
